@@ -13,6 +13,7 @@
 		848D015B1E8B3ACC007BDC0A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 848D01591E8B3ACC007BDC0A /* Main.storyboard */; };
 		848D015D1E8B3ACC007BDC0A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 848D015C1E8B3ACC007BDC0A /* Assets.xcassets */; };
 		848D01601E8B3ACC007BDC0A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 848D015E1E8B3ACC007BDC0A /* LaunchScreen.storyboard */; };
+		848D01681E8C71E6007BDC0A /* SpeechAnimationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848D01671E8C71E6007BDC0A /* SpeechAnimationCoordinator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		848D015C1E8B3ACC007BDC0A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		848D015F1E8B3ACC007BDC0A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		848D01611E8B3ACC007BDC0A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		848D01671E8C71E6007BDC0A /* SpeechAnimationCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechAnimationCoordinator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 				848D01531E8B3ACB007BDC0A /* AppDelegate.swift */,
 				848D01551E8B3ACB007BDC0A /* art.scnassets */,
 				848D01571E8B3ACC007BDC0A /* GameViewController.swift */,
+				848D01671E8C71E6007BDC0A /* SpeechAnimationCoordinator.swift */,
 				848D01591E8B3ACC007BDC0A /* Main.storyboard */,
 				848D015C1E8B3ACC007BDC0A /* Assets.xcassets */,
 				848D015E1E8B3ACC007BDC0A /* LaunchScreen.storyboard */,
@@ -141,6 +144,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				848D01681E8C71E6007BDC0A /* SpeechAnimationCoordinator.swift in Sources */,
 				848D01581E8B3ACC007BDC0A /* GameViewController.swift in Sources */,
 				848D01541E8B3ACB007BDC0A /* AppDelegate.swift in Sources */,
 			);

@@ -12,11 +12,26 @@ import SceneKit
 
 class GameViewController: UIViewController {
 
-    override func viewDidLoad() {
+    var base_human = SCNNode()
+    let wave_base_human_id = "base_human_waving"
+    let shrug_base_human_id = "base_human_shrug"
+    var wave_base_human :CAAnimation? = CAAnimation()
+    var shrug_base_human :CAAnimation? = CAAnimation()
+    
+    override func viewDidLoad()
+    {
         super.viewDidLoad()
         
         // create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
+        let scene = SCNScene(named: "art.scnassets/base_human.dae")!
+        wave_base_human = CAAnimation.animateWithSceneNamed(name:"art.scnassets/\(wave_base_human_id).dae" )!
+        wave_base_human?.delegate = self
+        wave_base_human?.repeatCount = 1
+        
+        shrug_base_human =  CAAnimation.animateWithSceneNamed(name:"art.scnassets/\(shrug_base_human_id).dae" )!
+        shrug_base_human?.delegate = self
+        shrug_base_human?.repeatCount = 1
+        
         
         // create and add a camera to the scene
         let cameraNode = SCNNode()
@@ -24,7 +39,7 @@ class GameViewController: UIViewController {
         scene.rootNode.addChildNode(cameraNode)
         
         // place the camera
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 15)
+        cameraNode.position = SCNVector3(x: 0, y: 10, z: 25)
         
         // create and add a light to the scene
         let lightNode = SCNNode()
@@ -39,12 +54,27 @@ class GameViewController: UIViewController {
         ambientLightNode.light!.type = .ambient
         ambientLightNode.light!.color = UIColor.darkGray
         scene.rootNode.addChildNode(ambientLightNode)
+       
+        
+        // Add a floor
+        let floorGeo = SCNFloor()
+        let floorMaterial = SCNMaterial()
+        floorMaterial.diffuse.contents = UIColor.green
+        floorMaterial.specular.contents = UIColor.black
+        floorGeo.firstMaterial = floorMaterial
+        
+        let floorNode = SCNNode(geometry:floorGeo )
+        scene.rootNode.addChildNode(floorNode)
+        
         
         // retrieve the ship node
-        let ship = scene.rootNode.childNode(withName: "ship", recursively: true)!
+        base_human = scene.rootNode.childNode(withName: "base_human_armtr", recursively: true)!
+      
+       // make it face the camera. 
+        base_human.eulerAngles = SCNVector3Make(0, Float.pi * 4.0/5, 0)
         
-        // animate the 3d object
-        ship.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
+        self.startWave()
+        
         
         // retrieve the SCNView
         let scnView = self.view as! SCNView
@@ -59,11 +89,35 @@ class GameViewController: UIViewController {
         scnView.showsStatistics = true
         
         // configure the view
-        scnView.backgroundColor = UIColor.black
+        
+        scnView.backgroundColor = UIColor.white
         
         // add a tap gesture recognizer
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         scnView.addGestureRecognizer(tapGesture)
+    }
+   
+    func startWave()
+    {
+        
+        base_human.addAnimation(wave_base_human!, forKey: wave_base_human_id)
+    //    base_human.removeAnimation(forKey: wave_base_human_id)
+    }
+   
+    func stopWave()
+    {
+        base_human.removeAnimation(forKey: wave_base_human_id)
+    }
+   
+    
+    func startShrug()
+    {
+        base_human.addAnimation(shrug_base_human! , forKey: shrug_base_human_id)
+    }
+   
+    func stopShrug()
+    {
+        base_human.removeAnimation(forKey: shrug_base_human_id)
     }
     
     func handleTap(_ gestureRecognize: UIGestureRecognizer) {
@@ -119,7 +173,41 @@ class GameViewController: UIViewController {
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+       
         // Release any cached data, images, etc that aren't in use.
     }
 
 }
+
+extension CAAnimation
+{
+    class func animateWithSceneNamed(name : String) -> CAAnimation?
+    {
+        var anim : CAAnimation?
+        if let scene = SCNScene(named:  name)
+        {
+           scene.rootNode.enumerateChildNodes({ (child, stop) in
+                if child.animationKeys.count > 0
+                {
+                        anim = child.animation(forKey:child.animationKeys.first! )
+                        stop.initialize(to: true)
+                }
+           })
+        }
+        return anim
+    }
+}
+
+
+extension GameViewController : CAAnimationDelegate
+{
+    func animationDidStart(_ anim: CAAnimation)
+    {
+        print("Animating : \(anim)")
+    }
+    
+    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+        print("Animating Stop: \(anim)")
+    }
+}
+
