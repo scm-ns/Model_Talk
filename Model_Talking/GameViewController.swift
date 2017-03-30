@@ -25,7 +25,7 @@ class GameViewController: UIViewController {
         base_human = scene.rootNode.childNode(withName: "base_human_armtr", recursively: true)!
       
        // make it face the camera. 
-        //base_human.eulerAngles = SCNVector3Make(0, Float.pi * 4.0/5, 0)
+        base_human.eulerAngles = SCNVector3Make(0, Float.pi * 4.0/5, 0)
         
         // setup the scene view
         let scnView = self.view as! SCNView
