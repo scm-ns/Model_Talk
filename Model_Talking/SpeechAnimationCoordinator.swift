@@ -68,20 +68,30 @@ class SpeechAnimationCoodinator : NSObject
    
 }
 
+// Build Interaction between Speech and Animation
+extension SpeechAnimationCoodinator
+{
+    // Call after the scene has been shown and everything has been setup. That is after view did load
+   func startInteraction()
+   {
+        let word = convertSpeechToStr()
+    
+        guard let word = word else
+        {
+            return
+        }
+   
+    
+
+
+    
+   }
+}
+
 // Support for animations
 extension SpeechAnimationCoodinator
 {
     
-    /*
-        Now be able to talk to the model and the model will show some actions. 
- 
-    */
-    func startSpeechInteration()
-    {
-        self.startWave()
-    }
-    
-     
     func startWave()
     {
         model.addAnimation(wave_base_human!, forKey: wave_base_human_id)
@@ -109,8 +119,8 @@ extension SpeechAnimationCoodinator
 // Support for speech
 extension SpeechAnimationCoodinator
 {
-   func askSpeechPermission()
-   {
+    func askSpeechPermission()
+    {
         SFSpeechRecognizer.requestAuthorization
         {
             ( status :SFSpeechRecognizerAuthorizationStatus) in
@@ -127,19 +137,20 @@ extension SpeechAnimationCoodinator
                 
             }
         }
-   }
+    }
     
-    func startRecognizer()
+    func convertSpeechToStr() -> String?
     {
+       var result_str : String? = nil
        // if no permission. return
        guard self.speech_setup_status == .avaliable else
        {
-            return
+            return nil
        }
       
         guard let node = self.audioEngine.inputNode else
         {
-           return
+           return nil
         }
        
         let recordingFormat = node.outputFormat(forBus: 0)
@@ -158,29 +169,42 @@ extension SpeechAnimationCoodinator
         }
         catch
         {
-           return print(error)
+           print(error)
         }
         
-       
         
         self.speechRecogTask = self.speechRecognizer?.recognitionTask(with: self.speech_request_buffer , resultHandler: 
         {
-            (result : SFSpeechREcognitionResult , error) in
+            (result : SFSpeechRecognitionResult? , error) in
          
             if let result = result
-            
-
-            })
-
-
-            
-
+            {
+                let speech_str = result.bestTranscription.formattedString
+                result_str = speech_str
+            }
+            else if let error = error
+            {
+               print(error)
+            }
 
         })
-        
+    
+        return result_str
         
     }
-    
+   
+    func cancelRecord()
+    {
+        self.audioEngine.stop()
+   
+        if let node = audioEngine.inputNode
+        {
+            node.removeTap(onBus: 0)
+        }
+       
+        self.speechRecogTask?.cancel()
+    }
+
     
     
 }
