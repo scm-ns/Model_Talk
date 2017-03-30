@@ -24,8 +24,22 @@ class SpeechAnimationCoodinator : NSObject
     var model : SCNNode! = nil
     let wave_base_human_id = "base_human_waving"
     let shrug_base_human_id = "base_human_shrug"
-    var wave_base_human :CAAnimation? = CAAnimation()
-    var shrug_base_human :CAAnimation? = CAAnimation()
+    
+    lazy var wave_base_human :CAAnimation? =
+    {
+        let model =  CAAnimation.animateWithSceneNamed(name:"art.scnassets/\(self.wave_base_human_id).dae" )!
+        model.delegate = self
+        model.repeatCount = 1
+        return model
+    }()
+    
+    lazy var shrug_base_human :CAAnimation? =
+    {
+        let model =  CAAnimation.animateWithSceneNamed(name:"art.scnassets/\( self.shrug_base_human_id).dae" )!
+        model.delegate = self
+        model.repeatCount = 1
+        return model
+    }()
 
     // properties for speech recog
     let audioEngine = AVAudioEngine()
@@ -45,7 +59,6 @@ class SpeechAnimationCoodinator : NSObject
     {
         super.init()
         self.model = model
-        wave_base_human = CAAnimation.animateWithSceneNamed(name:"art.scnassets/\(wave_base_human_id).dae" )!
         wave_base_human?.delegate = self
         wave_base_human?.repeatCount = 1
         
@@ -74,18 +87,38 @@ extension SpeechAnimationCoodinator
     // Call after the scene has been shown and everything has been setup. That is after view did load
    func startInteraction()
    {
-        let word = convertSpeechToStr()
+        switch self.speech_setup_status
+        {
+            case .avaliable:
+                self.getWordAndAct()
+            case .recognizing:
+                self.cancelRecord()
+            case .unavaliable:
+                print("Cannot init audio recognition engine")
+        }
+   
+   }
     
-        guard let word = word else
+   func getWordAndAct()
+   {
+        let result = convertSpeechToStr()
+    
+        guard let word = result else
         {
             return
         }
-   
     
-
-
+        switch word
+        {
+            case "hello",
+                 "hi",
+                 "how are you":
+                self.startWave()
+            default:
+                self.startShrug()
+        }
+    }
     
-   }
 }
 
 // Support for animations
