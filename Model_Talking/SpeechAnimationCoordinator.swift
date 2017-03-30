@@ -46,7 +46,7 @@ class SpeechAnimationCoodinator : NSObject
     fileprivate let speechRecognizer = SFSpeechRecognizer()
     fileprivate let speech_request_buffer = SFSpeechAudioBufferRecognitionRequest()
     fileprivate var speechRecogTask : SFSpeechRecognitionTask?
-    
+
     var speech_setup_status = SpeechRecogStatus.unavaliable
     {
         didSet
@@ -54,7 +54,12 @@ class SpeechAnimationCoodinator : NSObject
             // update ui element
         }
     }
+  
    
+    //properties for talking back
+    fileprivate let synth = AVSpeechSynthesizer()
+    fileprivate var synth_utter :AVSpeechUtterance? = nil
+    
     init(model : SCNNode)
     {
         super.init()
@@ -112,6 +117,7 @@ extension SpeechAnimationCoodinator
                          "hi",
                          "how are you":
                         self.startWave()
+                        self.sayHello()
                     default:
                         self.startShrug()
                 }
@@ -151,6 +157,16 @@ extension SpeechAnimationCoodinator
     
 }
 
+// Support for talking back to user
+extension SpeechAnimationCoodinator
+{
+   func sayHello()
+   {
+        self.synth_utter = AVSpeechUtterance(string: "hello")
+        self.synth_utter?.rate = 0.3
+        self.synth.speak(self.synth_utter!)
+   }
+}
 
 // Support for speech
 extension SpeechAnimationCoodinator
