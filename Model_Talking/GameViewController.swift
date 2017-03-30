@@ -62,8 +62,6 @@ class GameViewController: UIViewController {
        // make it face the camera. 
         base_human.eulerAngles = SCNVector3Make(0, Float.pi * 4.0/5, 0)
         
-        
-        
         // retrieve the SCNView
         let scnView = self.view as! SCNView
         
@@ -77,52 +75,13 @@ class GameViewController: UIViewController {
         scnView.showsStatistics = true
         
         // configure the view
-        
         scnView.backgroundColor = UIColor.white
         
-        // add a tap gesture recognizer
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        scnView.addGestureRecognizer(tapGesture)
     }
   
     
-    func handleTap(_ gestureRecognize: UIGestureRecognizer) {
-        // retrieve the SCNView
-        let scnView = self.view as! SCNView
-        
-        // check what nodes are tapped
-        let p = gestureRecognize.location(in: scnView)
-        let hitResults = scnView.hitTest(p, options: [:])
-        // check that we clicked on at least one object
-        if hitResults.count > 0 {
-            // retrieved the first clicked object
-            let result: AnyObject = hitResults[0]
-            
-            // get its material
-            let material = result.node!.geometry!.firstMaterial!
-            
-            // highlight it
-            SCNTransaction.begin()
-            SCNTransaction.animationDuration = 0.5
-            
-            // on completion - unhighlight
-            SCNTransaction.completionBlock = {
-                SCNTransaction.begin()
-                SCNTransaction.animationDuration = 0.5
-                
-                material.emission.contents = UIColor.black
-                
-                SCNTransaction.commit()
-            }
-            
-            material.emission.contents = UIColor.red
-            
-            SCNTransaction.commit()
-        }
-    }
-    
     override var shouldAutorotate: Bool {
-        return true
+        return false
     }
     
     override var prefersStatusBarHidden: Bool {
@@ -137,18 +96,4 @@ class GameViewController: UIViewController {
         }
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-       
-        // Release any cached data, images, etc that aren't in use.
-    }
-
 }
-
-
-
-extension GameViewController : CAAnimationDelegate
-{
-  
-}
-
