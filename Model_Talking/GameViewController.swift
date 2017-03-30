@@ -13,14 +13,64 @@ import SceneKit
 class GameViewController: UIViewController {
 
     var base_human = SCNNode()
-   
+    var interactor : SpeechAnimationCoodinator? = nil
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
         
-        // create a new scene
-        let scene = SCNScene(named: "art.scnassets/base_human.dae")!
+        guard let scene = self.createAndConfigureScene() else { return }
         
+        // retrieve the ship node
+        base_human = scene.rootNode.childNode(withName: "base_human_armtr", recursively: true)!
+      
+       // make it face the camera. 
+        base_human.eulerAngles = SCNVector3Make(0, Float.pi * 4.0/5, 0)
+        
+        // setup the scene view
+        let scnView = self.view as! SCNView
+        scnView.scene = scene
+        scnView.allowsCameraControl = true
+        scnView.backgroundColor = UIColor.white
+    
+        // setup button at the bottom of scene
+        let button = UIButton(frame: CGRect(x: 0 , y: self.view.frame.height - 40 , width: self.view.frame.width , height:  40))
+        
+        //interactor = SpeechAnimationCoodinator(model: base_human)
+        
+        
+    }
+    
+    
+  
+    
+    override var shouldAutorotate: Bool
+    {
+        return false
+    }
+    
+    override var prefersStatusBarHidden: Bool
+    {
+        return true
+    }
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            return .allButUpsideDown
+        } else {
+            return .all
+        }
+    }
+    
+}
+
+// Coniguration of Scene Kit
+extension GameViewController
+{
+    func createAndConfigureScene() -> SCNScene?
+    {
+         // create a new scene
+        let scene = SCNScene(named: "art.scnassets/base_human.dae")!
         
         // create and add a camera to the scene
         let cameraNode = SCNNode()
@@ -54,46 +104,9 @@ class GameViewController: UIViewController {
         
         let floorNode = SCNNode(geometry:floorGeo )
         scene.rootNode.addChildNode(floorNode)
-        
-        
-        // retrieve the ship node
-        base_human = scene.rootNode.childNode(withName: "base_human_armtr", recursively: true)!
       
-       // make it face the camera. 
-        base_human.eulerAngles = SCNVector3Make(0, Float.pi * 4.0/5, 0)
-        
-        // retrieve the SCNView
-        let scnView = self.view as! SCNView
-        
-        // set the scene to the view
-        scnView.scene = scene
-        
-        // allows the user to manipulate the camera
-        scnView.allowsCameraControl = true
-        
-        // show statistics such as fps and timing information
-        scnView.showsStatistics = true
-        
-        // configure the view
-        scnView.backgroundColor = UIColor.white
+        return scene
         
     }
-  
-    
-    override var shouldAutorotate: Bool {
-        return false
-    }
-    
-    override var prefersStatusBarHidden: Bool {
-        return true
-    }
-    
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            return .allButUpsideDown
-        } else {
-            return .all
-        }
-    }
-    
 }
+
