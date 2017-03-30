@@ -12,8 +12,9 @@ import SceneKit
 
 class GameViewController: UIViewController {
 
-    var base_human = SCNNode()
+    var base_human :SCNNode! = nil
     var interactor : SpeechAnimationCoodinator? = nil
+    var camera_node : SCNNode! = nil
     
     override func viewDidLoad()
     {
@@ -23,7 +24,13 @@ class GameViewController: UIViewController {
         
         // retrieve the ship node
         base_human = scene.rootNode.childNode(withName: "base_human_armtr", recursively: true)!
-      
+        
+        // constriant the camera to always look at this model
+        let target_node = SCNLookAtConstraint(target: base_human)
+        target_node.isGimbalLockEnabled = true
+        self.camera_node.constraints  = [target_node]
+        
+        
        // make it face the camera. 
         //base_human.eulerAngles = SCNVector3Make(0, Float.pi * 4.0/5, 0)
         
@@ -82,12 +89,12 @@ extension GameViewController
         let scene = SCNScene(named: "art.scnassets/base_human.dae")!
         
         // create and add a camera to the scene
-        let cameraNode = SCNNode()
-        cameraNode.camera = SCNCamera()
-        scene.rootNode.addChildNode(cameraNode)
+        self.camera_node = SCNNode()
+        self.camera_node.camera = SCNCamera()
+        scene.rootNode.addChildNode(self.camera_node)
         
         // place the camera
-        cameraNode.position = SCNVector3(x: 0, y: 10, z: 25)
+        camera_node.position = SCNVector3(x: 0, y: 10, z: 25)
         
         // create and add a light to the scene
         let lightNode = SCNNode()
