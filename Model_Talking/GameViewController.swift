@@ -13,24 +13,13 @@ import SceneKit
 class GameViewController: UIViewController {
 
     var base_human = SCNNode()
-    let wave_base_human_id = "base_human_waving"
-    let shrug_base_human_id = "base_human_shrug"
-    var wave_base_human :CAAnimation? = CAAnimation()
-    var shrug_base_human :CAAnimation? = CAAnimation()
-    
+   
     override func viewDidLoad()
     {
         super.viewDidLoad()
         
         // create a new scene
         let scene = SCNScene(named: "art.scnassets/base_human.dae")!
-        wave_base_human = CAAnimation.animateWithSceneNamed(name:"art.scnassets/\(wave_base_human_id).dae" )!
-        wave_base_human?.delegate = self
-        wave_base_human?.repeatCount = 1
-        
-        shrug_base_human =  CAAnimation.animateWithSceneNamed(name:"art.scnassets/\(shrug_base_human_id).dae" )!
-        shrug_base_human?.delegate = self
-        shrug_base_human?.repeatCount = 1
         
         
         // create and add a camera to the scene
@@ -73,7 +62,6 @@ class GameViewController: UIViewController {
        // make it face the camera. 
         base_human.eulerAngles = SCNVector3Make(0, Float.pi * 4.0/5, 0)
         
-        self.startWave()
         
         
         // retrieve the SCNView
@@ -96,29 +84,7 @@ class GameViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         scnView.addGestureRecognizer(tapGesture)
     }
-   
-    func startWave()
-    {
-        
-        base_human.addAnimation(wave_base_human!, forKey: wave_base_human_id)
-    //    base_human.removeAnimation(forKey: wave_base_human_id)
-    }
-   
-    func stopWave()
-    {
-        base_human.removeAnimation(forKey: wave_base_human_id)
-    }
-   
-    
-    func startShrug()
-    {
-        base_human.addAnimation(shrug_base_human! , forKey: shrug_base_human_id)
-    }
-   
-    func stopShrug()
-    {
-        base_human.removeAnimation(forKey: shrug_base_human_id)
-    }
+  
     
     func handleTap(_ gestureRecognize: UIGestureRecognizer) {
         // retrieve the SCNView
@@ -179,35 +145,10 @@ class GameViewController: UIViewController {
 
 }
 
-extension CAAnimation
-{
-    class func animateWithSceneNamed(name : String) -> CAAnimation?
-    {
-        var anim : CAAnimation?
-        if let scene = SCNScene(named:  name)
-        {
-           scene.rootNode.enumerateChildNodes({ (child, stop) in
-                if child.animationKeys.count > 0
-                {
-                        anim = child.animation(forKey:child.animationKeys.first! )
-                        stop.initialize(to: true)
-                }
-           })
-        }
-        return anim
-    }
-}
 
 
 extension GameViewController : CAAnimationDelegate
 {
-    func animationDidStart(_ anim: CAAnimation)
-    {
-        print("Animating : \(anim)")
-    }
-    
-    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
-        print("Animating Stop: \(anim)")
-    }
+  
 }
 
