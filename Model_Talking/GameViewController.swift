@@ -33,16 +33,25 @@ class GameViewController: UIViewController {
         scnView.allowsCameraControl = true
         scnView.backgroundColor = UIColor.white
     
-        // setup button at the bottom of scene
-        let button = UIButton(frame: CGRect(x: 0 , y: self.view.frame.height - 40 , width: self.view.frame.width , height:  40))
+        interactor = SpeechAnimationCoodinator(model: base_human)
         
-        //interactor = SpeechAnimationCoodinator(model: base_human)
+        // setup button at the bottom of scene
+        let button = UIButton(type: UIButtonType.custom)
+        button.frame = CGRect(x: 0, y: self.view.frame.height - 40, width: self.view.frame.width , height:  40)
+        button.backgroundColor = UIColor.red
+        self.view.addSubview(button)
+        if let interactor = interactor
+        {
+            button.addTarget(interactor, action: #selector(interactor.startInteraction), for: .touchDown)
+        }
+        
+        
         
         
     }
+   
+ 
     
-    
-  
     
     override var shouldAutorotate: Bool
     {

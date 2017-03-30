@@ -21,11 +21,11 @@ enum SpeechRecogStatus
 class SpeechAnimationCoodinator : NSObject
 {
     // properties for animation
-    var model : SCNNode! = nil
-    let wave_base_human_id = "base_human_waving"
-    let shrug_base_human_id = "base_human_shrug"
+    fileprivate var model : SCNNode! = nil
+    fileprivate let wave_base_human_id = "base_human_waving"
+    fileprivate let shrug_base_human_id = "base_human_shrug"
     
-    lazy var wave_base_human :CAAnimation? =
+    fileprivate lazy var wave_base_human :CAAnimation? =
     {
         let model =  CAAnimation.animateWithSceneNamed(name:"art.scnassets/\(self.wave_base_human_id).dae" )!
         model.delegate = self
@@ -33,7 +33,7 @@ class SpeechAnimationCoodinator : NSObject
         return model
     }()
     
-    lazy var shrug_base_human :CAAnimation? =
+    fileprivate lazy var shrug_base_human :CAAnimation? =
     {
         let model =  CAAnimation.animateWithSceneNamed(name:"art.scnassets/\( self.shrug_base_human_id).dae" )!
         model.delegate = self
@@ -42,10 +42,10 @@ class SpeechAnimationCoodinator : NSObject
     }()
 
     // properties for speech recog
-    let audioEngine = AVAudioEngine()
-    let speechRecognizer = SFSpeechRecognizer()
-    let speech_request_buffer = SFSpeechAudioBufferRecognitionRequest()
-    var speechRecogTask : SFSpeechRecognitionTask?
+    fileprivate let audioEngine = AVAudioEngine()
+    fileprivate let speechRecognizer = SFSpeechRecognizer()
+    fileprivate let speech_request_buffer = SFSpeechAudioBufferRecognitionRequest()
+    fileprivate var speechRecogTask : SFSpeechRecognitionTask?
     
     var speech_setup_status = SpeechRecogStatus.unavaliable
     {
@@ -87,6 +87,7 @@ extension SpeechAnimationCoodinator
     // Call after the scene has been shown and everything has been setup. That is after view did load
    func startInteraction()
    {
+        print("start interacting")
         switch self.speech_setup_status
         {
             case .avaliable:
@@ -99,24 +100,26 @@ extension SpeechAnimationCoodinator
    
    }
     
-   func getWordAndAct()
+   fileprivate func getWordAndAct()
    {
-        let result = convertSpeechToStr()
-    
-        guard let word = result else
+        self.convertSpeechToStr()
         {
-            return
-        }
+            (word: String) in
     
-        switch word
-        {
-            case "hello",
-                 "hi",
-                 "how are you":
-                self.startWave()
-            default:
-                self.startShrug()
+                switch word.lowercased()
+                {
+                    case "hello",
+                         "hi",
+                         "how are you":
+                        self.startWave()
+                    default:
+                        self.startShrug()
+                }
+                
+                self.cancelRecord()
         }
+   
+   
     }
     
 }
@@ -125,7 +128,7 @@ extension SpeechAnimationCoodinator
 extension SpeechAnimationCoodinator
 {
     
-    func startWave()
+    fileprivate func startWave()
     {
         model.addAnimation(wave_base_human!, forKey: wave_base_human_id)
     }
@@ -172,18 +175,17 @@ extension SpeechAnimationCoodinator
         }
     }
     
-    func convertSpeechToStr() -> String?
+    func convertSpeechToStr(completionHandeler : @escaping (_ input : String) -> Void)
     {
-       var result_str : String? = nil
        // if no permission. return
        guard self.speech_setup_status == .avaliable else
        {
-            return nil
+            return
        }
       
         guard let node = self.audioEngine.inputNode else
         {
-           return nil
+           return
         }
        
         let recordingFormat = node.outputFormat(forBus: 0)
@@ -213,7 +215,8 @@ extension SpeechAnimationCoodinator
             if let result = result
             {
                 let speech_str = result.bestTranscription.formattedString
-                result_str = speech_str
+                print("Recogized Str : \(speech_str)")
+                completionHandeler(speech_str)
             }
             else if let error = error
             {
@@ -222,7 +225,6 @@ extension SpeechAnimationCoodinator
 
         })
     
-        return result_str
         
     }
    
@@ -236,6 +238,7 @@ extension SpeechAnimationCoodinator
         }
        
         self.speechRecogTask?.cancel()
+        self.speech_setup_status = .avaliable
     }
 
     
